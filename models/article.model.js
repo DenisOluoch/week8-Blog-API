@@ -14,26 +14,22 @@ const articleSchema = new mongoose.Schema(
             minlength: 20,
         },
         author: {
-            type: String,
-            default: "Guest Author",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true,
         },
     }, 
-    {
-        timestamps: true,
-        statics: {
-            searchByKeyword(keyword) {
-                const regex = new RegExp(keyword, 'i'); // 'i' for case-insensitive
-                return this.find({
-                    $or: [
-                        { title: { $regex: regex } },
-                        { content: { $regex: regex } },
-                        { author: { $regex: regex } }
-                    ]
-                });
-            }
-        }
-    }
-);
 
-const Article = mongoose.model("Article", articleSchema);
-module.exports = Article;
+    {timestamps: true});
+    
+        
+    articleSchema.statics.searchByKeyword = function(keyword) {
+        return this.find({
+            $or: [
+                { title: { $regex: keyword, $options: 'i' } },
+                { content: { $regex: keyword, $options: 'i' } },
+            ]
+        });
+    };
+
+module.exports = mongoose.model("Article", articleSchema);

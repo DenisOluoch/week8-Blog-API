@@ -1,6 +1,6 @@
 const express = require('express');
 const {
-    postArticle, // Make sure this matches the exact export name in your controller!
+    postArticle,
     getAllArticles,
     searchArticles,
     getArticleById,
@@ -8,13 +8,17 @@ const {
     deleteArticleById
 } = require('../controllers/article.controller.js');
 
+const { validateArticle, validateUpdateArticle } = require('../middlewares/validateArticle.js'); 
+const requireAuth = require('../middlewares/requireAuth.js');
+
 const router = express.Router();
 
-// Use '/' instead of '/articles' because index.js already prefixes with '/api/articles'
-router.post('/', postArticle);
-router.get('/', getAllArticles);
+// All main CRUD routes protected with requireAuth[cite: 1]
+router.post('/', requireAuth, validateArticle, postArticle);
+router.get('/', requireAuth, getAllArticles);
 router.get('/search', searchArticles);
-router.get('/:id', getArticleById);
-router.put('/:id', updateArticleById);
-router.delete('/:id', deleteArticleById);
+router.get('/:id', requireAuth, getArticleById);
+router.put('/:id', requireAuth, validateUpdateArticle, updateArticleById);
+router.delete('/:id', requireAuth, deleteArticleById);
+
 module.exports = router;

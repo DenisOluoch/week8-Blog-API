@@ -7,6 +7,7 @@ const logRequest = require('./middlewares/logger.js');
 const errorHandler = require('./middlewares/errorHandler.js'); 
 
 const ArticleRoutes = require('./routes/article.route.js');
+const UserRoutes = require('./routes/user.route.js');
 
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
@@ -20,10 +21,10 @@ app.use(logRequest);
 
 // Mount routes
 app.use('/api/articles', ArticleRoutes);
+app.use('/api/users', UserRoutes);
 
 // Error handler MUST be at the bottom (after routes)
 app.use(errorHandler); 
-
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
